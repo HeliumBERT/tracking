@@ -14,15 +14,16 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
     container_name: backend
+    build:
+      context: ./tracking-backend
     volumes:
       - ./backend:/app
       - /app/node_modules
     ports:
       - "60002:3000"
+    environment:
+      COOKIE_SECRET: ${COOKIE_SECRET}
     depends_on:
       - db
 
