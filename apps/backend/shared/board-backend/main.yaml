@@ -1,0 +1,1723 @@
+openapi: "3.1.0"
+info:
+  title: Board-backend
+  version: "1.0"
+servers:
+  - url: https://localhost:50002/
+
+
+paths:
+  /:
+    get:
+      operationId: "Base"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required: [message]
+
+  /api/documents:
+    post:
+      operationId: "DocumentCreate"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentCreateDTO"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+    get:
+      operationId: "DocumentMany"
+      parameters:
+        - $ref: "#/components/parameters/SearchTermQuery"
+        - $ref: "#/components/parameters/FromDateQuery"
+        - $ref: "#/components/parameters/ToDateQuery"
+        - $ref: "#/components/parameters/DocumentClassificationQuery"
+        - $ref: "#/components/parameters/DocumentReceiveModeQuery"
+        - $ref: "#/components/parameters/DocumentFileLabelsQuery"
+        - $ref: "#/components/parameters/AuthorQuery"
+        - $ref: "#/components/parameters/ShowSoftDeletedQuery"
+        - $ref: "#/components/parameters/PageSizeQuery"
+        - $ref: "#/components/parameters/CursorQuery"
+        - $ref: "#/components/parameters/DocumentSortByQuery"
+        - $ref: "#/components/parameters/SortOrderQuery"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentManyResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+
+  /api/documents/{id}:
+    get:
+      operationId: "DocumentGet"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            $ref: "#/components/schemas/id"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+  
+    patch:
+      operationId: "DocumentUpdate"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentUpdateDTO"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+    
+    delete:
+      operationId: DocumentSoftDelete
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+               $ref: "#/components/schemas/DocumentSoftDeleteActionResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+  
+  /api/documents/{id}/restore:
+    post:
+      operationId: DocumentRestore
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+               $ref: "#/components/schemas/DocumentSoftDeleteActionResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/documents/{id}/hard:
+    delete:
+      operationId: DocumentHardDelete
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+               $ref: "#/components/schemas/DocumentHardDeleteResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/documents/{id}/auditLogs:
+    get:
+      operationId: DocumentAuditLogGet
+      parameters:
+        - name: includeFileLogs
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - $ref: "#/components/parameters/LogActionsQuery"
+        - $ref: "#/components/parameters/FromDateQuery"
+        - $ref: "#/components/parameters/ToDateQuery"
+        - $ref: "#/components/parameters/PageSizeQuery"
+        - $ref: "#/components/parameters/CursorQuery"
+        - $ref: "#/components/parameters/SortOrderQuery"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/documents/{id}/files:
+    post:
+      operationId: DocumentFileCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentFileCreateDTO"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentFileCreateResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/documents/{id}/files/{fileId}:
+    get:
+      operationId: DocumentFileGet
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentFileResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+    patch:
+      operationId: DocumentFileUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentFileUpdateDTO"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentFileResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      operationId: DocumentFileSoftDelete
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentFileStatusChangeResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/documents/{id}/files/{fileId}/blob:
+    post:
+      operationId: DocumentFileBlobPost
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required: [file]
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentFileResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+    get:
+      operationId: DocumentFileContentGet
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/documents/{id}/files/{fileId}/restore:
+    post:
+      operationId: DocumentFileRestore
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentFileStatusChangeResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/documents/{id}/files/{fileId}/hard:
+    delete:
+      operationId: DocumentFileHardDelete
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentFileStatusChangeResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/documents/{id}/files/{fileId}/auditLogs:
+    get:
+      operationId: DocumentFileAuditLogGet
+      parameters:
+        - $ref: "#/components/parameters/LogActionsQuery"
+        - $ref: "#/components/parameters/FromDateQuery"
+        - $ref: "#/components/parameters/ToDateQuery"
+        - $ref: "#/components/parameters/PageSizeQuery"
+        - $ref: "#/components/parameters/CursorQuery"
+        - $ref: "#/components/parameters/SortOrderQuery"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+
+  /api/users:
+    post:
+      operationId: UserCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreateDTO"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "409":
+          $ref: '#/components/responses/Conflict'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+    get:
+      operationId: UserMany
+      parameters:
+        - $ref: "#/components/parameters/SearchTermQuery"
+        - $ref: "#/components/parameters/PageSizeQuery"
+        - $ref: "#/components/parameters/CursorQuery"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserManyResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+
+  /api/users/{id}:
+    get:
+      operationId: UserGet
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+  
+    patch:
+      operationId: UserUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateOtherDTO"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+    
+    delete:
+      operationId: UserSoftDelete
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDeleteResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}/auditLogs:
+    get:
+      operationId: UserAuditLogGet
+      parameters:
+        - $ref: "#/components/parameters/LogActionsQuery"
+        - $ref: "#/components/parameters/FromDateQuery"
+        - $ref: "#/components/parameters/ToDateQuery"
+        - $ref: "#/components/parameters/PageSizeQuery"
+        - $ref: "#/components/parameters/CursorQuery"
+        - $ref: "#/components/parameters/SortOrderQuery"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/current:
+    patch:
+      operationId: UserUpdateSelf
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateSelfDTO"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+    
+    delete:
+      operationId: UserDeleteSelf
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDeleteResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+  
+  /api/users/current/password:
+    patch:
+      operationId: UserPasswordUpdateSelf
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserPasswordUpdateSelfDTO"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+
+  /api/session:
+    post:
+      operationId: SessionCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SessionCreateDTO"
+      responses:
+        "204":
+          description: "Success"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/session/current:
+    get:
+      operationId: SessionGetSelf
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionFindResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+    
+    delete:
+      operationId: SessionDeleteSelf
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionDeleteResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/session/auditLogs:
+    get:
+      operationId: SessionAuditLogGet
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/id"
+        - $ref: "#/components/parameters/LogActionsQuery"
+        - $ref: "#/components/parameters/FromDateQuery"
+        - $ref: "#/components/parameters/ToDateQuery"
+        - $ref: "#/components/parameters/PageSizeQuery"
+        - $ref: "#/components/parameters/CursorQuery"
+        - $ref: "#/components/parameters/SortOrderQuery"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+
+  /api/inference/classify:
+    post:
+      operationId: Classify
+      parameters:
+        - name: model
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [albert, heliumbert]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClassifyRequestDTO"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClassifyResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/inference/contentExtract:
+    post:
+      operationId: ContentExtract
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required: [file]
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentExtractResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/inference/documentInfer:
+    post:
+      operationId: DocumentInfer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required: [file]
+      responses:
+        '200':
+          description: "Document Inference Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentInferFieldsDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+
+  /api/auditLogs:
+    get:
+      parameters:
+        - name: actorId
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/id"
+        - name: entityId
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/id"
+        - name: entityType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [DOCUMENT, DOCUMENT_FILE, USER, SESSION]
+        - $ref: "#/components/parameters/LogActionsQuery"
+        - $ref: "#/components/parameters/FromDateQuery"
+        - $ref: "#/components/parameters/ToDateQuery"
+        - $ref: "#/components/parameters/PageSizeQuery"
+        - $ref: "#/components/parameters/CursorQuery"
+        - $ref: "#/components/parameters/SortOrderQuery"
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+
+  /api/dashboard:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/FromDateQuery"
+        - $ref: "#/components/parameters/ToDateQuery"
+      responses:
+        '200':
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardResponseDTO"
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  responses:
+    Forbidden:
+      description: "Client does not have sufficient permissions."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorDTO"
+
+    NotFound:
+      description: "Client tried to find a resource that doesn't exist."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorDTO"
+
+    Unauthorized:
+      description: "Client is not authorized for this request."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorDTO"
+
+    BadRequest:
+      description: "Client sent a malformed request."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorDTO"
+
+    Conflict:
+      description: "Client sent a request with conflicting information."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorDTO"
+
+    InternalServerError:
+      description: "An internal server error occurred."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/anything"
+
+  parameters:
+    SearchTermQuery:
+      name: searchTerm
+      in: query
+      required: false
+      schema:
+        type: string
+
+    FromDateQuery:
+      name: fromDate
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/date"
+
+    ToDateQuery:
+      name: toDate
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/date"
+
+    AuthorQuery:
+      name: authorId
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/id"
+
+    DocumentClassificationQuery:
+      name: classification
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/DocumentClassification"
+
+    DocumentReceiveModeQuery:
+      name: receiveMode
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/DocumentReceiveMode"
+
+    DocumentFileLabelsQuery:
+      name: fileLabels
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: "#/components/schemas/DocumentFileLabel"
+      style: form
+      explode: true
+  
+    ShowSoftDeletedQuery:
+      name: showSoftDeleted
+      in: query
+      required: false
+      schema:
+        type: boolean
+
+    DocumentSortByQuery:
+      name: documentSortBy
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [TITLE, DOCUMENT_DATE, DOCUMENT_NUMBER, OFFICE_NAME, CREATED_AT, UPDATED_AT]
+
+    LogActionsQuery:
+      name: logActions
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: "#/components/schemas/LogAction"
+      style: form
+      explode: true
+
+    PageSizeQuery:
+      name: pageSize
+      in: query
+      required: false
+      schema:
+        type: number
+
+    CursorQuery:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/id"
+
+    SortOrderQuery:
+      name: sortOrder
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [ASC, DESC]
+
+  schemas:
+    date:
+      type: string
+      format: date-time
+
+    id:
+      type: string
+      format: uuid
+
+    anything:
+      anyOf:
+        - type: object
+        - type: array
+        - type: boolean
+        - type: integer
+        - type: number
+        - type: string
+        - type: "null"
+
+
+
+    DocumentClassification:
+      type: string
+      enum: [OFFICIAL, CONFIDENTIAL]
+
+    DocumentReceiveMode:
+      type: string
+      enum: [EMAIL, HAND_CARRY, COURIER, OTHER]
+
+    DocumentFileLabel:
+      type: string
+      enum: [LETTER, FORM, EMAIL, HANDWRITTEN, ADVERTISEMENT, SCIENTIFIC_REPORT, SCIENTIFIC_PUBLICATION, SPECIFICATION, FILE_FOLDER, NEWS_ARTICLE, BUDGET, INVOICE, PRESENTATION, QUESTIONNAIRE, RESUME, MEMO]
+
+    UserPrivilege:
+      type: string
+      enum: [ADMIN, BASIC]
+
+    LogAction:
+      type: string
+      enum: [CREATE, READ, UPDATE, DELETE, SOFT_DELETE, RESTORE]
+
+
+    ErrorDTO:
+      type: object
+      properties:
+        message:
+          type: string
+        moreInfo:
+          $ref: "#/components/schemas/anything"
+      required: [message]
+
+    ActorDTO:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        username:
+          type: string
+      required: [id, username]
+
+
+    DocumentCreateDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        description: 
+          type: string
+        documentDate:
+          $ref: "#/components/schemas/date"
+        documentNumber:
+          type: string
+        classification:
+          $ref: "#/components/schemas/DocumentClassification"
+        receiveMode:
+          $ref: "#/components/schemas/DocumentReceiveMode"
+        officeName:
+          type: string
+        notes:
+          type: string
+      required: [title, documentDate, documentNumber, classification, receiveMode, officeName]
+
+    DocumentUpdateDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        description: 
+          type: string
+        documentDate:
+          $ref: "#/components/schemas/date"
+        documentNumber:
+          type: string
+        classification:
+          $ref: "#/components/schemas/DocumentClassification"
+        receiveMode:
+          $ref: "#/components/schemas/DocumentReceiveMode"
+        officeName:
+          type: string
+        notes:
+          type: string
+
+    DocumentResponseDTO:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        title:
+          type: string
+        description:
+          type: string
+        documentDate:
+          $ref: "#/components/schemas/date"
+        documentNumber:
+          type: string
+        classification:
+          $ref: "#/components/schemas/DocumentClassification"
+        receiveMode:
+          $ref: "#/components/schemas/DocumentReceiveMode"
+        officeName:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          $ref: "#/components/schemas/date"
+        updatedAt:
+          $ref: "#/components/schemas/date"
+        author:
+          $ref: "#/components/schemas/ActorDTO"
+        updator:
+          $ref: "#/components/schemas/ActorDTO"
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentFileResponseDTO"
+        softDeletedAt:
+          anyOf:
+            - $ref: "#/components/schemas/date"
+            - type: "null"
+      required: [id, title, documentDate, classification, receiveMode, officeName, createdAt, updatedAt, author, updator, files]
+
+    DocumentManyResponseItemDTO:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        title:
+          type: string
+        description:
+          type: string
+        documentDate:
+          $ref: "#/components/schemas/date"
+        documentNumber:
+          type: string
+        classification:
+          $ref: "#/components/schemas/DocumentClassification"
+        receiveMode:
+          $ref: "#/components/schemas/DocumentReceiveMode"
+        officeName:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          $ref: "#/components/schemas/date"
+        updatedAt:
+          $ref: "#/components/schemas/date"
+        author:
+          $ref: "#/components/schemas/ActorDTO"
+        updator:
+          $ref: "#/components/schemas/ActorDTO"
+        softDeletedAt:
+          anyOf:
+            - $ref: "#/components/schemas/date"
+            - type: "null"
+      required: [id, title, documentDate, classification, receiveMode, officeName, createdAt, updatedAt, author, updator]
+
+
+    DocumentManyResponseDTO:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentManyResponseItemDTO"
+        nextCursor:
+          anyOf:
+            - $ref: "#/components/schemas/id"
+            - type: "null"
+      required: [list, nextCursor]
+
+    DocumentSoftDeleteActionResponseDTO:
+      type: object
+      properties:
+        id: 
+          $ref: "#/components/schemas/id"
+        title:
+          type: string
+      required: [id, title]
+
+    DocumentHardDeleteResponseDTO:
+      type: object
+      properties:
+        id: 
+          $ref: "#/components/schemas/id"
+        title:
+          type: string
+        failedDeleteFiles:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                $ref: "#/components/schemas/id"
+              error:
+                type: string
+            required: [id, error]
+      required: [id, title, failedDeleteFiles]
+
+
+    DocumentFileCreateDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        labels:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentFileLabel"
+      required: [title, content]
+
+    DocumentFileUpdateDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        labels:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentFileLabel"
+
+    DocumentFileCreateResponseDTO:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        createdAt:
+          $ref: "#/components/schemas/date"
+        uploadFileTo:
+          type: string
+      required: [id, createdAt, uploadFileTo]
+
+    DocumentFileResponseDTO:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        documentId:
+          $ref: "#/components/schemas/id"
+        title:
+          type: string
+        content:
+          type: string
+        labels:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentFileLabel"
+        mimetype:
+          type: string
+        fileSizeBytes:
+          type: integer
+        createdAt:
+          $ref: "#/components/schemas/date"
+        updatedAt:
+          $ref: "#/components/schemas/date"
+        author:
+          $ref: "#/components/schemas/ActorDTO"
+        updator:
+          $ref: "#/components/schemas/ActorDTO"
+        softDeletedAt:
+          anyOf:
+            - $ref: "#/components/schemas/date"
+            - type: "null"
+      required: [id, documentId, title, content, labels, mimetype, fileSizeBytes, createdAt, updatedAt, author, updator]
+
+    DocumentFileStatusChangeResponseDTO:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        documentId:
+          $ref: "#/components/schemas/id"
+        title:
+          type: string
+      required: [id, documentId]
+
+
+    UserCreateDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        privilege:
+          $ref: "#/components/schemas/UserPrivilege"
+      required: [username, email, password, privilege]
+
+    UserUpdateOtherDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        privilege:
+          $ref: "#/components/schemas/UserPrivilege"
+
+    UserUpdateSelfDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+
+    UserPasswordUpdateSelfDTO:
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+      required: [currentPassword, newPassword]
+
+    UserResponseDTO:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        username:
+          type: string
+        email:
+          type: string
+        privilege:
+          $ref: "#/components/schemas/UserPrivilege"
+        createdAt:
+          $ref: "#/components/schemas/date"
+        updatedAt:
+          $ref: "#/components/schemas/date"
+        deletedAt:
+          anyOf:
+            - $ref: "#/components/schemas/date"
+            - type: "null"
+      required: [id, username, email, privilege, createdAt, updatedAt, deletedAt]
+
+    UserManyResponseDTO:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                $ref: "#/components/schemas/id"
+              username:
+                type: string
+              email:
+                type: string
+              privilege:
+                $ref: "#/components/schemas/UserPrivilege"
+              createdAt:
+                $ref: "#/components/schemas/date"
+              updatedAt:
+                $ref: "#/components/schemas/date"
+              deletedAt:
+                anyOf:
+                  - $ref: "#/components/schemas/date"
+                  - type: "null"
+            required: [id, username, email, privilege, createdAt, updatedAt, deletedAt]
+        nextCursor:
+          anyOf:
+            - $ref: "#/components/schemas/id"
+            - type: "null"
+      required: [list, nextCursor]
+
+    UserDeleteResponseDTO:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        username:
+          type: string
+        deletedAt:
+          $ref: "#/components/schemas/date"
+      required: [id, username, deletedAt]
+
+
+    SessionCreateDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required: [username, password]
+
+    SessionFindResponseDTO:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              $ref: "#/components/schemas/id"
+            username:
+              type: string
+            email:
+              type: string
+            privilege:
+              $ref: "#/components/schemas/UserPrivilege"
+          required: [id, username, email, privilege]
+      required: [user]
+
+    SessionDeleteResponseDTO:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              $ref: "#/components/schemas/id"
+            username:
+              type: string
+          required: [id, username]
+      required: [user]
+
+
+
+    ClassifyLabel:
+      type: string
+      enum:
+        - LETTER
+        - FORM
+        - EMAIL
+        - HANDWRITTEN
+        - ADVERTISEMENT
+        - SCIENTIFIC_REPORT
+        - SCIENTIFIC_PUBLICATION
+        - SPECIFICATION
+        - FILE_FOLDER
+        - NEWS_ARTICLE
+        - BUDGET
+        - INVOICE
+        - PRESENTATION
+        - QUESTIONNAIRE
+        - RESUME
+        - MEMO
+
+
+    ClassifyRequestDTO:
+      type: object
+      properties:
+        text:
+          type: string
+      required: [text]
+
+    ClassifyLabelProbabilityDTO:
+      type: object
+      properties:
+        label:
+          $ref: "#/components/schemas/ClassifyLabel"
+        probability:
+          type: number
+      required: [label, probability]
+
+    ClassifyResponseDTO:
+      type: object
+      properties:
+        labelProbabilities:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClassifyLabelProbabilityDTO"
+        loss:
+          type: number
+        time_s:
+          type: number
+        suggestedLabels:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClassifyLabel"
+      required: [labelProbabilities, loss, time_s, suggestedLabels]
+
+
+    ContentExtractResponseDTO:
+      type: object
+      properties:
+        content:
+          type: string
+      required: [content]
+
+    DocumentInferFieldsDTO:
+      type: object
+      properties:
+        content:
+          type: string
+        title:
+          type: [string, "null"]
+        description:
+          type: string
+        documentNumber:
+          type: [string, "null"]
+        officeName:
+          type: [string, "null"]
+        documentDate:
+          anyOf:
+            - $ref: "#/components/schemas/date"
+            - type: "null"
+        notes:
+          type: [string, "null"]
+        classifyResponse:
+          $ref: "#/components/schemas/ClassifyResponseDTO"
+      required: [content, title, description, documentNumber, officeName, documentDate, notes, classifyResponse]
+
+
+    AuditLogResponseDTO:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                $ref: "#/components/schemas/id"
+              action:
+                $ref: "#/components/schemas/LogAction"
+              actor:
+                type: object
+                properties:
+                  id:
+                    $ref: "#/components/schemas/id"
+                  username:
+                    type: string
+                required: [id, username]
+              createdAt:
+                $ref: "#/components/schemas/date"
+      
+              documentLog:
+                type: object
+                properties:
+                  document:
+                    type: object
+                    properties:
+                      id:
+                        $ref: "#/components/schemas/id"
+                      title:
+                        type: string
+                    required: [id, title]
+                  documentIdSnapshot:
+                    $ref: "#/components/schemas/id"
+                  documentTitleSnapshot:
+                    type: string
+                required: [documentIdSnapshot, documentTitleSnapshot]
+
+              documentFileLog:
+                type: object
+                properties:
+                  document:
+                    type: object
+                    properties:
+                      id:
+                        $ref: "#/components/schemas/id"
+                      title:
+                        type: string
+                    required: [id, title]
+                  documentIdSnapshot:
+                    $ref: "#/components/schemas/id"
+                  documentTitleSnapshot:
+                    type: string
+
+                  documentFile:
+                    type: object
+                    properties:
+                      id:
+                        $ref: "#/components/schemas/id"
+                      title:
+                        type: string
+                    required: [id, title]
+                  documentFileIdSnapshot:
+                    $ref: "#/components/schemas/id"
+                  documentFileTitleSnapshot:
+                    type: string
+                required: [documentIdSnapshot, documentTitleSnapshot, documentFileIdSnapshot, documentFileTitleSnapshot]
+              
+              userLog:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        $ref: "#/components/schemas/id"
+                      username:
+                        type: string
+                    required: [id, username]
+                  userIdSnapshot:
+                    $ref: "#/components/schemas/id"
+                  userNameSnapshot:
+                    type: string
+                required: [userIdSnapshot, userNameSnapshot]
+
+              sessionLog:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        $ref: "#/components/schemas/id"
+                      username:
+                        type: string
+                    required: [id, username]
+                  userIdSnapshot:
+                    $ref: "#/components/schemas/id"
+                  userNameSnapshot:
+                    type: string
+                required: [userIdSnapshot, userNameSnapshot]
+
+            required: [id, action, actor, createdAt]
+
+        nextCursor:
+          anyOf:
+            - $ref: "#/components/schemas/id"
+            - type: "null"
+      required: [list, nextCursor]
+    
+
+    DashboardResponseDTO:
+      type: object
+      properties:
+        documents:
+          type: object
+          properties:
+            count:
+              type: number
+            softDeletedCount:
+              type: number
+            recentActivity:
+              type: array
+              items:
+                $ref: "#/components/schemas/DocumentManyResponseItemDTO"
+            noFileDocuments:
+              type: array
+              items:
+                $ref: "#/components/schemas/DocumentManyResponseItemDTO"
+            activity:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    $ref: "#/components/schemas/date"
+                  createCount:
+                    type: integer
+                required: [date, createCount]
+          required: [count, recentActivity, noFileDocuments, activity]
+        file:
+          type: object
+          properties:
+            count:
+              type: number
+            softDeletedCount:
+              type: number
+            totalUsedStorageBytes:
+              type: number
+            labelGraph:
+              type: array
+              items:
+                type: object
+                properties:
+                  label:
+                    $ref: "#/components/schemas/DocumentFileLabel"
+                  count:
+                    type: number
+                required: [label, count]
+          required: [count, totalUsedStorageBytes, labelGraph]
+        auditLogs:
+          type: object
+          properties:
+            activity:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    $ref: "#/components/schemas/date"
+                  createCount:
+                    type: integer
+                  readCount:
+                    type: integer
+                  updateCount:
+                    type: integer
+                  deleteCount:
+                    type: integer
+                  softDeleteCount:
+                    type: integer
+                  restoreCount:
+                    type: integer
+                required: [date, createCount, readCount, updateCount, deleteCount, softDeleteCount, restoreCount]
+          required: [activity]
+      required: [documents, file]
