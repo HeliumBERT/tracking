@@ -1,7 +1,7 @@
 {
-  "name": "board-backend",
+  "name": "@repo/backend",
   "version": "0.1.0",
-  "description": "Board Backend",
+  "description": "Backend",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -13,26 +13,15 @@
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "test:migrate": "dotenv -e .env.test -- npx prisma migrate deploy",
     "test": "dotenv -e .env.test -- jest",
-    "generate:openapi": "ts-node scripts/generateOpenApi.ts",
     "dev": "tsx watch src/index.ts",
     "prod:build": "tspc",
     "prod:start": "node ./out/src/index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/BFP-Echague/backend"
-  },
   "keywords": [
-    "bfp",
-    "fire map",
     "backend"
   ],
   "author": "Azelynn Andrew Ritua",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/BFP-Echague/backend/issues"
-  },
-  "homepage": "https://github.com/BFP-Echague/backend#readme",
   "dependencies": {
     "@absxn/process-env-parser": "^1.1.1",
     "@jest/globals": "^29.7.0",
