@@ -1,5 +1,5 @@
 {
-  "name": "tracking",
+  "name": "@repo/backend-contract",
   "private": true,
   "scripts": {
     "build": "turbo run build",
