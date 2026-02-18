@@ -1,0 +1,17 @@
+{
+  "name": "backend-contract",
+  "version": "1.0.0",
+  "description": "The backend contract, one source of truth for all backend API calls.",
+  "license": "ISC",
+  "author": "Azelynn Ritua",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "generate": "ts-node scripts/generateOpenApi.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

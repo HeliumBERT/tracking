@@ -8,14 +8,9 @@ function run(command: string) {
 
 const projects = [
     {
-        yaml: "shared/board-backend/main.yaml",
-        tsOutput: "src/shared/board-backend/types.ts",
-        zodOutput: "src/shared/board-backend/zod.ts",
-    },
-    {
-        yaml: "shared/board-inference/main.yaml",
-        tsOutput: "src/shared/board-inference/types.ts",
-        zodOutput: "src/shared/board-inference/zod.ts",
+        yaml: "main.yaml",
+        tsOutput: "src/types.ts",
+        zodOutput: "src/zod.ts",
     },
 ];
 

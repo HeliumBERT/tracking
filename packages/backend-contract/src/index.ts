@@ -1,4 +1,4 @@
-import { paths, type components } from "./types.js";
+import { type paths, type components } from "./types.js";
 import { schemas, api } from "./zod.js";
 import * as zod from "./zod.js";
 
