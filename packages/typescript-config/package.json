@@ -4,7 +4,8 @@
   "private": true,
   "license": "MIT",
   "exports": {
-    ".": "./tsconfig.json"
+    ".": "./tsconfig.json",
+    "./node": "./tsconfig.node.json"
   },
   "publishConfig": {
     "access": "public"
