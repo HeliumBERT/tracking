@@ -1,0 +1,12 @@
+name: tracking-dev
+services:
+  db:
+    image: postgres:18.3
+    container_name: database
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "60000:5432"
