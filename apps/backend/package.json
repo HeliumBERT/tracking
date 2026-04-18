@@ -24,6 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
     "@absxn/process-env-parser": "^1.1.1",
     "@zodios/core": "^10.9.6",
     "argon2": "^0.44.0",
