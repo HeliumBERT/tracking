@@ -10,6 +10,9 @@ import onlyWarn from "eslint-plugin-only-warn";
  * @type {import("eslint").Linter.Config[]}
  * */
 export const config = [
+  {files: ["**/*.{js,mjs,cjs,ts}"]},
+  {languageOptions: { globals: {...globals.browser, ...globals.node} }},
+
   js.configs.recommended,
   eslintConfigPrettier,
   ...tseslint.configs.recommended,
@@ -20,6 +23,33 @@ export const config = [
     rules: {
       "turbo/no-undeclared-env-vars": "warn",
     },
+  },
+  {
+    rules: {
+      "semi": "warn",
+      "prefer-const": "warn",
+      "object-curly-spacing": [
+        "warn",
+        "always"
+      ],
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { "argsIgnorePattern": "^_" }
+      ],
+      "@typescript-eslint/member-delimiter-style": [
+        "warn",
+        {
+            "multiline": {
+                "delimiter": "semi",
+                "requireLast": true
+            },
+            "singleline": {
+                "delimiter": "semi",
+                "requireLast": false
+            }
+        }
+      ]
+    }
   },
   {
     plugins: {

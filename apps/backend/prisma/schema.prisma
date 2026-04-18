@@ -1,0 +1,99 @@
+datasource db {
+    provider = "postgresql"
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+// Represents an account's privilege level.
+enum PrivilegeLevel {
+    BASIC
+    ADMIN
+}
+
+// Represents a user of the system.
+model User {
+    id String @id @default(uuid(4))
+
+    username    String @unique
+    displayName String
+    email       String @unique
+
+    passwordHash String
+
+    privilege PrivilegeLevel
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    sessions Session[]
+
+    tickets             Ticket[]
+    ticketMessageAuthor TicketMessage[] @relation("TicketMessageAuthor")
+    ticketMessageTarget TicketMessage[] @relation("TicketMessageTarget")
+    files               File[]
+}
+
+// Session storage. 
+model Session {
+    id String @id
+
+    secretHash     String
+    createdAt      DateTime @default(now())
+    lastVerifiedAt DateTime @default(now())
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
+}
+
+// ----------------------------------------
+
+model Ticket {
+    id String @id @default(uuid(4))
+
+    title String
+
+    messages TicketMessage[]
+
+    author   User   @relation(fields: [authorId], references: [id])
+    authorId String
+
+    createdAt DateTime @default(now())
+}
+
+model TicketMessage {
+    id String @id @default(uuid(4))
+
+    ticket   Ticket @relation(fields: [ticketId], references: [id])
+    ticketId String
+
+    author   User   @relation("TicketMessageAuthor", fields: [authorId], references: [id])
+    authorId String
+
+    target   User   @relation("TicketMessageTarget", fields: [targetId], references: [id])
+    targetId String
+
+    message String
+    files   File[]
+
+    createdAt DateTime @default(now())
+}
+
+model File {
+    id String @id @default(uuid(4))
+
+    ticketMessage   TicketMessage? @relation(fields: [ticketMessageId], references: [id])
+    ticketMessageId String?        @unique
+
+    currentFilename String
+    mimetype        String
+    storagePath     String
+    fileSizeBytes   Int
+
+    author   User   @relation(fields: [authorId], references: [id])
+    authorId String
+
+    createdAt DateTime @default(now())
+}
