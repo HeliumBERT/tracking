@@ -4,4 +4,4 @@ export function dateToString(date: Date): string {
     return date.toISOString();
 }
 
-export const zodDate: z.ZodType<Date, z.ZodTypeDef, string> = z.string().datetime({ offset: true }).pipe(z.coerce.date());
+export const zodDate = z.iso.datetime({ offset: true }).transform((val) => new Date(val));

@@ -1,5 +1,5 @@
 {
-  "name": "backend-contract",
+  "name": "@repo/backend-contract",
   "version": "1.0.0",
   "description": "The backend contract, one source of truth for all backend API calls.",
   "license": "ISC",
@@ -7,7 +7,7 @@
   "type": "module",
   "main": "index.js",
   "exports": {
-    "./*": "./src/index.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "generate": "ts-node scripts/generateOpenApi.ts"
@@ -17,5 +17,12 @@
     "@types/node": "^22.19.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@zodios/core": "^10.9.6",
+    "openapi-typescript": "^7.13.0",
+    "openapi-zod-client": "^1.18.3",
+    "zod": "^4.3.6",
+    "zodios": "^5.1.0"
   }
 }

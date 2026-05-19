@@ -1,19 +1,19 @@
-import { BackendDTOs, backendPaths } from "@src/shared/index.js";
+import { components, paths } from "@repo/backend-contract";
 
-export type UserCreate = BackendDTOs["UserCreateDTO"];
+export type UserCreate = components["schemas"]["UserCreateDTO"];
 
-export type UserUpdateOther = BackendDTOs["UserUpdateOtherDTO"];
-export type UserUpdateSelf = BackendDTOs["UserUpdateSelfDTO"];
-export type UserPasswordUpdateSelf = BackendDTOs["UserPasswordUpdateSelfDTO"];
+export type UserUpdateOther = components["schemas"]["UserUpdateOtherDTO"];
+export type UserUpdateSelf = components["schemas"]["UserUpdateSelfDTO"];
+export type UserPasswordUpdateSelf = components["schemas"]["UserPasswordUpdateSelfDTO"];
 
-type UResponse = BackendDTOs["UserResponseDTO"];
+type UResponse = components["schemas"]["UserResponseDTO"];
 export interface UserResponse extends Omit<UResponse, "createdAt" | "updatedAt" | "deletedAt"> {
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date | null;
 }
 
-type ManyResponse = BackendDTOs["UserManyResponseDTO"];
+type ManyResponse = components["schemas"]["UserManyResponseDTO"];
 export interface UserManyResponse extends Omit<ManyResponse, "list"> {
     list: (Omit<ManyResponse["list"][0], "createdAt" | "updatedAt" | "deletedAt"> & {
         createdAt: Date;
@@ -22,10 +22,10 @@ export interface UserManyResponse extends Omit<ManyResponse, "list"> {
     })[];
 }
 
-type DeleteResponse = BackendDTOs["UserDeleteResponseDTO"];
+type DeleteResponse = components["schemas"]["UserDeleteResponseDTO"];
 export interface UserDeleteResponse extends Omit<DeleteResponse, "deletedAt"> {
     deletedAt: Date;
 }
 
-export type UserManyQueryRaw = NonNullable<backendPaths["/api/users"]["get"]["parameters"]["query"]>;
+export type UserManyQueryRaw = NonNullable<paths["/api/users"]["get"]["parameters"]["query"]>;
 export type UserManyQuery = UserManyQueryRaw;

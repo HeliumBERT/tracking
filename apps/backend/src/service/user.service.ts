@@ -1,18 +1,8 @@
-import { LogAction, Prisma, PrivilegeLevel } from "@prisma/client";
+import { PrivilegeLevel } from "@prisma/client";
 import { AppError, canManageOtherUser, canUpdateOtherUserPrivilege, comparePassword, getNextCursor, hashPassword, isPrivilegeSettableToOther, NotFoundError, NotFoundField } from "@src/core/index.js";
 import { UserCreate, UserDeleteResponse, UserManyQuery, UserManyResponse, UserPasswordUpdateSelf, UserResponse, UserUpdateOther, UserUpdateSelf } from "@src/models/index.js";
-import { auditLogRepository, sessionRepository, userRepository } from "@src/repository/index.js";
+import { sessionRepository, userRepository } from "@src/repository/index.js";
 import { StatusCodes } from "http-status-codes";
-
-function toUserLog(result: Prisma.UserGetPayload<undefined>): Prisma.UserAuditLogCreateNestedOneWithoutLogInput {
-    return {
-        create: {
-            user: { connect: { id: result.id } },
-            userIdSnapshot: result.id,
-            userNameSnapshot: result.username
-        }
-    };
-}
 
 export const userService = {
     async create(actorId: string, actorPrivilege: PrivilegeLevel, data: UserCreate): Promise<UserResponse> {
@@ -27,15 +17,10 @@ export const userService = {
 
         const result = await userRepository.create({
             username: data.username,
+            displayName: data.displayName,
             email: data.email,
             passwordHash: passwordHash,
             privilege: data.privilege,
-        });
-
-        await auditLogRepository.create({
-            action: LogAction.CREATE,
-            actor: { connect: { id: actorId } },
-            userLog: toUserLog(result)
         });
 
         return {
@@ -52,12 +37,6 @@ export const userService = {
     async findById(actorId: string, id: string): Promise<UserResponse> {
         const result = await userRepository.findById(id);
         if (result === null) throw new NotFoundError("user", NotFoundField.ID, id);
-
-        await auditLogRepository.create({
-            action: LogAction.READ,
-            actor: { connect: { id: actorId } },
-            userLog: toUserLog(result)
-        });
 
         return {
             id: result.id,
@@ -115,12 +94,6 @@ export const userService = {
             privilege: data.privilege
         });
 
-        await auditLogRepository.create({
-            action: LogAction.UPDATE,
-            actor: { connect: { id: actorId } },
-            userLog: toUserLog(result)
-        });
-
 
         return {
             id: result.id,
@@ -137,12 +110,6 @@ export const userService = {
         const result = await userRepository.update(actorId, {
             username: data.username,
             email: data.email,
-        });
-
-        await auditLogRepository.create({
-            action: LogAction.UPDATE,
-            actor: { connect: { id: actorId } },
-            userLog: toUserLog(result)
         });
 
         return {
@@ -168,12 +135,6 @@ export const userService = {
 
         const result = await userRepository.update(actorId, {
             passwordHash: await hashPassword(data.newPassword)
-        });
-
-        await auditLogRepository.create({
-            action: LogAction.UPDATE,
-            actor: { connect: { id: actorId } },
-            userLog: toUserLog(result)
         });
 
         return {
@@ -214,12 +175,6 @@ export const userService = {
 
         await sessionRepository.deleteAllFromUser(result.id);
 
-        await auditLogRepository.create({
-            action: LogAction.SOFT_DELETE,
-            actor: { connect: { id: actorId } },
-            userLog: toUserLog(result)
-        });
-
         return {
             id: result.id,
             username: result.username,
@@ -239,12 +194,6 @@ export const userService = {
         if (result.deletedAt === null) throw new AppError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to soft delete user");
 
         await sessionRepository.deleteAllFromUser(result.id);
-
-        await auditLogRepository.create({
-            action: LogAction.SOFT_DELETE,
-            actor: { connect: { id: actorId } },
-            userLog: toUserLog(result)
-        });
 
         return {
             id: result.id,

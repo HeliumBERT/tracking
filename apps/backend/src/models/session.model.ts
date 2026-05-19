@@ -1,10 +1,10 @@
-import { BackendDTOs } from "@src/shared/index.js";
+import { type Schemas } from "@repo/backend-contract";
 
-export type SessionCreate = BackendDTOs["SessionCreateDTO"]
+export type SessionCreate = Schemas["SessionCreateDTO"]
 
-type FindResponse = BackendDTOs["SessionFindResponseDTO"]
+type FindResponse = Schemas["SessionFindResponseDTO"]
 export interface SessionFindResponse extends Omit<FindResponse, "expiresOn"> {
     expiresOn: Date;
 }
 
-export type SessionDeleteResponse = BackendDTOs["SessionDeleteResponseDTO"];
+export type SessionDeleteResponse = Schemas["SessionDeleteResponseDTO"];

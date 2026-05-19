@@ -1,7 +1,7 @@
-import { backendSchemas } from "@src/shared/index.js";
+import { schemas } from "@repo/backend-contract";
 import { NextFunction, Request, Response } from "express";
 
 export async function sessionCreateParse(req: Request, res: Response, next: NextFunction) {
-    req.body = backendSchemas.SessionCreateDTO.parse(req.body);
+    req.body = schemas.SessionCreateDTO.parse(req.body);
     next();
 }

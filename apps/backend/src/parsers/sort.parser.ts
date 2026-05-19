@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
-import { backendSpec } from "@src/shared/index.js";
+import { components } from "@repo/backend-contract";
 
-export function toPrismaSortOrder(sortOrder: backendSpec.components["parameters"]["SortOrderQuery"] | undefined): Prisma.SortOrder {
+export function toPrismaSortOrder(sortOrder: components["parameters"]["SortOrderQuery"] | undefined): Prisma.SortOrder {
     if (sortOrder === "ASC") return "asc";
     else if (sortOrder === "DESC") return "desc";
     else return "asc";
